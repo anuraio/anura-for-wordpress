@@ -1,6 +1,6 @@
 === Plugin Name ===
    Anura.io
-   Plugin URI: https://www.anura.io/anura-script
+   Plugin URI: https://docs.anura.io/
    description: Welcome to Anura’s WordPress plug-in.  Anura is an Ad Fraud solution designed to accurately eliminate fraud to improve conversion rates.  With this plug in, you can easily set up a real-time visitor firewall to keep the fraud off of your site.  Before you can set this up, be sure to reach out to sales@anura.io to get your account set up first.
    Version: 1.0
    Tags: comments, spam, cache
