@@ -3,7 +3,7 @@
    Plugin Name: Anura.io
    Plugin URI: https://www.anura.io/anura-script
    description: Anura is an Ad Fraud solution designed to accurately eliminate fraud to improve conversion rates. With the Anura for WordPress plugin, you can easily set up a real-time visitor firewall to keep the fraud off of your site.  Before you can set this up, be sure to reach out to <a href="mailto:sales@anura.io">sales@anura.io</a> to get your account set up first.
-   Version: 1.0
+   Version: 1.1
    Author: Anura Solutions, LLC
    Author URI: https://www.anura.io/
    */
@@ -573,186 +573,269 @@ function anura_script() {
 
    if(!empty($instance_id_0)) {
       $anura_j_script = "<script type='text/javascript''>";
-      if($callback_enabled == 1) {
-      $anura_j_script .= '
-
-
-
-            // JSON
-      if (!window.JSON) {
-         window.JSON = {
-            parse: function(sJSON) {
-               return eval("(" + sJSON + ")");
-            },
-            stringify: (function() {
-               var toString = Object.prototype.toString;
-               var isArray = Array.isArray || function(a) {
-                  return toString.call(a) === "[object Array]";
-               };
-               var escMap = {
-                  "\b": "\\b",
-                  "\f": "\\f",
-                  "\n": "\\n",
-                  "\r": "\\r",
-                  "\t": "\\t"
-               };
-               var escFunc = function(m) {
-                  return escMap[m];
-               };
-               var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
-               return function stringify(value) {
-                  if (value === null) {
-                     return "null";
-                  } else if (typeof value === "number") {
-                     return isFinite(value) ? value.toString() : "null";
-                  } else if (typeof value === "boolean") {
-                     return value.toString();
-                  } else if (typeof value === "object") {
-                     if (typeof value.toJSON === "function") {
-                        return stringify(value.toJSON());
-                     } else if (isArray(value)) {
-                        var res = "[";
-                        for (var i = 0; i < value.length; i++) res += (i ? ", " : "") + stringify(value[i]);
-                        return res + "]";
-                     } else if (toString.call(value) === "[object Object]") {
-                        var tmp = [];
-                        for (var k in value) {
-                           if (value.hasOwnProperty(k)) tmp.push(stringify(k) + ": " + stringify(value[k]));
-                        }
-                        return "{" + tmp.join(", ") + "}";
-                     }
-                  }
-                  return "\"" + value.toString().replace(escRE, escFunc) + "\"";
-               };
-            })()
-         };
-      }
-
-      var anura_wp_called = false;
-         function anura_wp_handleResponse(http) {
-            var isCrawler = false;
-            if(http.response !== "" && http.response !== null && anura_wp_called == false) {
-               anura_wp_called = true;
-               var responseobj = JSON.parse(http.response);
-               if("object" === typeof(responseobj) && "object" == typeof(responseobj.rule_sets)) {
-                  if(responseobj.rule_sets.indexOf("WC") != "-1") {
-                     isCrawler = true;
-                  }
-               }
-            ';
-            $current_page = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            $current_page = explode('?', $current_page)[0];
-            // printf($current_page);
-
-            if(rtrim($current_page,'/') != rtrim($redirect_url_id, '/')) {
-               if(isset($callback_id_0) && $callback_id_0 != ""){
-
-                  $anura_j_script .= 'if ("function" === typeof '.$callback_id_0.'){'.$callback_id_0.'(http.response);}';
-               }
-
-               if($allow_webcrawlers_0 == "checked") {
-                  if($redirect == 1) {
-                     $anura_j_script .= '
-                     if(responseobj.result == "bad" && isCrawler != true) {
-                        window.location = "'.$redirect_url_id.'";
-                     }
-                     ';
-                  } else if($redirect == 2) {
-                     $anura_j_script .= '
-                     if(responseobj.result != "good" && isCrawler != true) {
-                        window.location = "'.$redirect_url_id.'";
-                     }
-                     ';
-                  }
-               } else {
-                  if($redirect == 1) {
-                     $anura_j_script .= '
-                     if(responseobj.result == "bad") {
-                        window.location = "'.$redirect_url_id.'";
-                     }
-                     ';
-                  } else if($redirect == 2) {
-                     $anura_j_script .= '
-                     if(responseobj.result != "good") {
-                        window.location = "'.$redirect_url_id.'";
-                     }
-                     ';
-                  }
-            }
-            }
+      if($redirect == 0) {
          $anura_j_script .= '
-      }
-   }
-';
-            
-               $anura_j_script .= '
-               function anura_wp_getResult(response) {
-                   var method = "POST";
-                   var params = ["instance='.$instance_id_0.'"];
-                   if (response.getId()) params.push("id="+encodeURIComponent(response.getId()));
-                   if (response.getExId()) params.push("exid="+encodeURIComponent(response.getExId()));
-                   var url = "https://script.anura.io/result.json"+("GET" === method ? "?"+params.join("&"): "");
-                   if (window.XDomainRequest) {
-                       var http = new XDomainRequest();
-                       if (http) {
-                           http.open(method, document.location.protocol === "https:" ? url: url.replace("https:", "http:"));
-                           http.onprogress = function(){};
-                           http.ontimeout = function(){};
-                           http.onerror = function(){};
-                           http.onload = function(){
-                              anura_wp_handleResponse(http);
-                           };
-                           setTimeout(function(){http.send("POST" === method ? params.join("&"): "");}, 0);
-                       }
-                   } else if (window.XMLHttpRequest) {
-                       var http = new XMLHttpRequest();
-                       if (http && "withCredentials" in http) {
-                           http.open(method, url, true);
-                           if ("POST" === method) http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                           http.onreadystatechange = function() {
-                              anura_wp_handleResponse(http);
+               // JSON
+         if (!window.JSON) {
+            window.JSON = {
+               parse: function(sJSON) {
+                  return eval("(" + sJSON + ")");
+               },
+               stringify: (function() {
+                  var toString = Object.prototype.toString;
+                  var isArray = Array.isArray || function(a) {
+                     return toString.call(a) === "[object Array]";
+                  };
+                  var escMap = {
+                     "\b": "\\b",
+                     "\f": "\\f",
+                     "\n": "\\n",
+                     "\r": "\\r",
+                     "\t": "\\t"
+                  };
+                  var escFunc = function(m) {
+                     return escMap[m];
+                  };
+                  var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
+                  return function stringify(value) {
+                     if (value === null) {
+                        return "null";
+                     } else if (typeof value === "number") {
+                        return isFinite(value) ? value.toString() : "null";
+                     } else if (typeof value === "boolean") {
+                        return value.toString();
+                     } else if (typeof value === "object") {
+                        if (typeof value.toJSON === "function") {
+                           return stringify(value.toJSON());
+                        } else if (isArray(value)) {
+                           var res = "[";
+                           for (var i = 0; i < value.length; i++) res += (i ? ", " : "") + stringify(value[i]);
+                           return res + "]";
+                        } else if (toString.call(value) === "[object Object]") {
+                           var tmp = [];
+                           for (var k in value) {
+                              if (value.hasOwnProperty(k)) tmp.push(stringify(k) + ": " + stringify(value[k]));
                            }
-                           http.send("POST" === method ? params.join("&"): "");
-                       }
-                   }
-               }
-               function anura_wp_callback(response) {
-                   if (response.getId() || response.getExId()) {
-                       anura_wp_getResult(response);
-                   }
-               }';
+                           return "{" + tmp.join(", ") + "}";
+                        }
+                     }
+                     return "\"" + value.toString().replace(escRE, escFunc) + "\"";
+                  };
+               })()
+            };
          }
+            (function(){
+               var anura = document.createElement("script");
+               if ("object" === typeof anura) {
+                  var request = {';
+                     $anura_j_script .= 'instance: '.$instance_id_0;
+                     if($source_2 != "" && isset($source_2) && $source_variable_source_1 != 'option-none') {
+                        $anura_j_script .= ',source:"'.$source_2.'"';
+                     }
+                     if($campaign_4 != "" && isset($campaign_4) && $campaign_variable_source_3 != 'option-none') {
+                        $anura_j_script .= ' ,campaign:  "'.$campaign_4.'"';
+                     }
+                     
+                     if($callback_enabled == 1) { 
+                        $anura_j_script .= ',callback:  "anura_wp_callback"';
+                     }
+                  $anura_j_script .= '};
+                  var params = [];
+                  for (var x in request) params.push(x+"="+encodeURIComponent(request[x]));
+                     params.push(Math.floor(1E12*Math.random()+1));
+                  anura.type = "text/javascript";
+                  anura.async = true;
+                  anura.src = "https://script.anura.io/request.js?"+params.join("&");
+                  var script = document.getElementsByTagName("script")[0];
+                  script.parentNode.insertBefore(anura, script);
+                  }
+               })();
+         </script>';
+         printf($anura_j_script); //prints the javascript to the page
+      } else {
+         if($callback_enabled == 1) {
          $anura_j_script .= '
-         (function(){
-            var anura = document.createElement("script");
-            if ("object" === typeof anura) {
-               var request = {';
-                  $anura_j_script .= 'instance: '.$instance_id_0;
-                  if($source_2 != "" && isset($source_2) && $source_variable_source_1 != 'option-none') {
-                     $anura_j_script .= ',source:"'.$source_2.'"';
+
+
+
+               // JSON
+         if (!window.JSON) {
+            window.JSON = {
+               parse: function(sJSON) {
+                  return eval("(" + sJSON + ")");
+               },
+               stringify: (function() {
+                  var toString = Object.prototype.toString;
+                  var isArray = Array.isArray || function(a) {
+                     return toString.call(a) === "[object Array]";
+                  };
+                  var escMap = {
+                     "\b": "\\b",
+                     "\f": "\\f",
+                     "\n": "\\n",
+                     "\r": "\\r",
+                     "\t": "\\t"
+                  };
+                  var escFunc = function(m) {
+                     return escMap[m];
+                  };
+                  var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
+                  return function stringify(value) {
+                     if (value === null) {
+                        return "null";
+                     } else if (typeof value === "number") {
+                        return isFinite(value) ? value.toString() : "null";
+                     } else if (typeof value === "boolean") {
+                        return value.toString();
+                     } else if (typeof value === "object") {
+                        if (typeof value.toJSON === "function") {
+                           return stringify(value.toJSON());
+                        } else if (isArray(value)) {
+                           var res = "[";
+                           for (var i = 0; i < value.length; i++) res += (i ? ", " : "") + stringify(value[i]);
+                           return res + "]";
+                        } else if (toString.call(value) === "[object Object]") {
+                           var tmp = [];
+                           for (var k in value) {
+                              if (value.hasOwnProperty(k)) tmp.push(stringify(k) + ": " + stringify(value[k]));
+                           }
+                           return "{" + tmp.join(", ") + "}";
+                        }
+                     }
+                     return "\"" + value.toString().replace(escRE, escFunc) + "\"";
+                  };
+               })()
+            };
+         }
+
+         var anura_wp_called = false;
+            function anura_wp_handleResponse(http) {
+               var isCrawler = false;
+               if(http.response !== "" && http.response !== null && anura_wp_called == false) {
+                  anura_wp_called = true;
+                  var responseobj = JSON.parse(http.response);
+                  if("object" === typeof(responseobj) && "object" == typeof(responseobj.rule_sets)) {
+                     if(responseobj.rule_sets.indexOf("WC") != "-1") {
+                        isCrawler = true;
+                     }
                   }
-                  if($campaign_4 != "" && isset($campaign_4) && $campaign_variable_source_3 != 'option-none') {
-                     $anura_j_script .= ' ,campaign:  "'.$campaign_4.'"';
+               ';
+               $current_page = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+               $current_page = explode('?', $current_page)[0];
+               // printf($current_page);
+
+               if(rtrim($current_page,'/') != rtrim($redirect_url_id, '/')) {
+                  if(isset($callback_id_0) && $callback_id_0 != ""){
+
+                     $anura_j_script .= 'if ("function" === typeof '.$callback_id_0.'){'.$callback_id_0.'(http.response);}';
                   }
-                  
-                  if($callback_enabled == 1) { 
-                     $anura_j_script .= ',callback:  "anura_wp_callback"';
-                  }
-               $anura_j_script .= '};
-               var params = [];
-               for (var x in request) params.push(x+"="+encodeURIComponent(request[x]));
-                  params.push(Math.floor(1E12*Math.random()+1));
-               anura.type = "text/javascript";
-               anura.async = true;
-               anura.src = "https://script.anura.io/request.js?"+params.join("&");
-               var script = document.getElementsByTagName("script")[0];
-               script.parentNode.insertBefore(anura, script);
+
+                  if($allow_webcrawlers_0 == "checked") {
+                     if($redirect == 1) {
+                        $anura_j_script .= '
+                        if(responseobj.result == "bad" && isCrawler != true) {
+                           window.location = "'.$redirect_url_id.'";
+                        }
+                        ';
+                     } else if($redirect == 2) {
+                        $anura_j_script .= '
+                        if(responseobj.result != "good" && isCrawler != true) {
+                           window.location = "'.$redirect_url_id.'";
+                        }
+                        ';
+                     }
+                  } else {
+                     if($redirect == 1) {
+                        $anura_j_script .= '
+                        if(responseobj.result == "bad") {
+                           window.location = "'.$redirect_url_id.'";
+                        }
+                        ';
+                     } else if($redirect == 2) {
+                        $anura_j_script .= '
+                        if(responseobj.result != "good") {
+                           window.location = "'.$redirect_url_id.'";
+                        }
+                        ';
+                     }
                }
-            })();
-      </script>';
+               }
+            $anura_j_script .= '
+         }
+      }
+   ';
+               
+                  $anura_j_script .= '
+                  function anura_wp_getResult(response) {
+                      var method = "POST";
+                      var params = ["instance='.$instance_id_0.'"];
+                      if (response.getId()) params.push("id="+encodeURIComponent(response.getId()));
+                      if (response.getExId()) params.push("exid="+encodeURIComponent(response.getExId()));
+                      var url = "https://script.anura.io/result.json"+("GET" === method ? "?"+params.join("&"): "");
+                      if (window.XDomainRequest) {
+                          var http = new XDomainRequest();
+                          if (http) {
+                              http.open(method, document.location.protocol === "https:" ? url: url.replace("https:", "http:"));
+                              http.onprogress = function(){};
+                              http.ontimeout = function(){};
+                              http.onerror = function(){};
+                              http.onload = function(){
+                                 anura_wp_handleResponse(http);
+                              };
+                              setTimeout(function(){http.send("POST" === method ? params.join("&"): "");}, 0);
+                          }
+                      } else if (window.XMLHttpRequest) {
+                          var http = new XMLHttpRequest();
+                          if (http && "withCredentials" in http) {
+                              http.open(method, url, true);
+                              if ("POST" === method) http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                              http.onreadystatechange = function() {
+                                 anura_wp_handleResponse(http);
+                              }
+                              http.send("POST" === method ? params.join("&"): "");
+                          }
+                      }
+                  }
+                  function anura_wp_callback(response) {
+                      if (response.getId() || response.getExId()) {
+                          anura_wp_getResult(response);
+                      }
+                  }';
+            }
+            $anura_j_script .= '
+            if(document.location.href.indexOf("'.$redirect_url_id.'") > -1) {} else {
+            (function(){
+               var anura = document.createElement("script");
+               if ("object" === typeof anura) {
+                  var request = {';
+                     $anura_j_script .= 'instance: '.$instance_id_0;
+                     if($source_2 != "" && isset($source_2) && $source_variable_source_1 != 'option-none') {
+                        $anura_j_script .= ',source:"'.$source_2.'"';
+                     }
+                     if($campaign_4 != "" && isset($campaign_4) && $campaign_variable_source_3 != 'option-none') {
+                        $anura_j_script .= ' ,campaign:  "'.$campaign_4.'"';
+                     }
+                     
+                     if($callback_enabled == 1) { 
+                        $anura_j_script .= ',callback:  "anura_wp_callback"';
+                     }
+                  $anura_j_script .= '};
+                  var params = [];
+                  for (var x in request) params.push(x+"="+encodeURIComponent(request[x]));
+                     params.push(Math.floor(1E12*Math.random()+1));
+                  anura.type = "text/javascript";
+                  anura.async = true;
+                  anura.src = "https://script.anura.io/request.js?"+params.join("&");
+                  var script = document.getElementsByTagName("script")[0];
+                  script.parentNode.insertBefore(anura, script);
+                  }
+               })();
+            }
+         </script>';
 
 
-      printf($anura_j_script); //prints the javascript to the page
+         printf($anura_j_script); //prints the javascript to the page
+      }
    }
 }
 
