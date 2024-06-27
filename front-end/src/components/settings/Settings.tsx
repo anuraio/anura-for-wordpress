@@ -18,7 +18,6 @@ export default function Settings() {
   onMount(async () => {
     const response = await fetch(apiURL);
     const result: AnuraSettings = await response.json();
-    console.log(result);
     setScriptSettings(result.script);
     setFallbackSettings(result.fallbacks);
     setRealTimeSettings(result.realTimeActions);
