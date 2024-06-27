@@ -9,16 +9,17 @@ define("ICON_SVG_URI", "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbm
 define("OPTION_NAME", "anura_settings");
 
 add_filter("plugin_action_links_" . ANURA_PLUGIN_BASENAME, function($links) {
-    $settingsLink = '<a href="admin.php?page=anura-wordpress-settings">' . __( 'Settings' ) . '</a>';
+    $settingsLink = '<a href="admin.php?page=anura-settings">' . __( 'Settings' ) . '</a>';
     array_push($links, $settingsLink);
     return $links;
 });
+
 add_action("admin_menu", function() {
     add_menu_page(
         'Anura Settings',
         'Anura',
         'manage_options',
-        'anura-wordpress-settings',
+        'anura-settings',
         __NAMESPACE__ . '\create_admin_settings_page',
         ICON_SVG_URI,
         67
