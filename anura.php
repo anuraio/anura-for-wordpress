@@ -14,6 +14,8 @@ if (!defined("ANURA_PLUGIN_VERSION")) {
   define("ANURA_PLUGIN_VERSION", "2.0.0");
 }
 
+define("ANURA_PLUGIN_BASENAME", plugin_basename(__FILE__));
+
 require_once __DIR__ . "/vendor/autoload.php";
 require_once __DIR__ . "/settings.php";
 require_once __DIR__ . "/anura_script.php";
