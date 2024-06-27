@@ -1,0 +1,18 @@
+{
+    "name": "anuraio/anura-for-wordpress",
+    "type": "wordpress-plugin",
+    "version": "1.0.0",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "justinrainbow/json-schema": "^5.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "9.6",
+        "10up/wp_mock": "^1.0"
+    },
+    "scripts": {
+        "test": [
+            "./vendor/bin/phpunit tests/"
+        ]
+    }
+}

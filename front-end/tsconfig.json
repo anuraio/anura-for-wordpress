@@ -1,0 +1,18 @@
+{
+  "types": ["jest", "@testing-library/jest-dom"],
+  "compilerOptions": {
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "typeRoots": ["./node_modules/@types/", "./types", "./node_modules"],
+    "types": ["vite/client", "@testing-library/jest-dom"],
+    "noEmit": true,
+    "isolatedModules": true,
+  },
+  "include": ["src/**/*"]
+}

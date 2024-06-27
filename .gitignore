@@ -1,0 +1,9 @@
+.phpunit.result.cache
+.phpunit.cache
+reports
+
+front-end/node_modules
+front-end/package-lock.json
+
+# if using pnpm instead of npm
+front-end/pnpm-lock.yaml
