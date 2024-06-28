@@ -38,7 +38,7 @@ class SettingsManager
     }
 
     /**
-     * Takes all of the settings from the WordPress option "anura_script_options" 
+     * Takes all of the settings from the WordPress option "anura_settings_option_name" 
      * and saves them into the new WordPress option "anura_settings"
      * @param array<string> $oldSettings The settings to migrate.
      */
