@@ -11,12 +11,12 @@
    callback: "anuraWPCallback"
   };
 
-  if (anuraScriptOptions.source) {
-   request.source = anuraScriptOptions.source;
+  if (anuraScriptOptions.sourceValue) {
+   request.source = anuraScriptOptions.sourceValue;
   }
 
-  if (anuraScriptOptions.campaign) {
-   request.campaign = anuraScriptOptions.campaign;
+  if (anuraScriptOptions.campaignValue) {
+   request.campaign = anuraScriptOptions.campaignValue;
   }
   
   if (containsAdditionalData(anuraScriptOptions.additionalData)){
