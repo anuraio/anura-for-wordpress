@@ -11,7 +11,7 @@
 
 namespace Anura;
 if (!defined("ANURA_PLUGIN_VERSION")) {
-  define("ANURA_PLUGIN_VERSION", "2.0.0");
+  define("ANURA_PLUGIN_VERSION", "2.0.1");
 }
 
 define("ANURA_PLUGIN_BASENAME", plugin_basename(__FILE__));
