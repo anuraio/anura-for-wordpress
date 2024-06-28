@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, ButtonToolbar, Form, InputGroup, Toast, ToastContainer } from "solid-bootstrap";
+import { Alert, Button, ButtonGroup, ButtonToolbar, Form, InputGroup, Toast, ToastContainer } from "solid-bootstrap";
 import { Show, createSignal, onMount } from "solid-js";
 import { createStore, unwrap } from "solid-js/store";
 import SavePopup from "./SavePopup";
@@ -6,18 +6,23 @@ import ExtraSettings from "./ExtraSettings";
 import { ScriptSchema, FallbackSchema, RealTimeSchema, getDefaultSettings } from "./SettingsSchemas";
 
 export default function Settings() {
-  const apiURL = "/wp-json/anura/v1/anura-settings";
+  const apiURL = "/?rest_route=/anura/v1/anura-settings";
 
   const [scriptSettings, setScriptSettings] = createStore(getDefaultSettings().script);
   const [fallbackSettings, setFallbackSettings] = createStore(getDefaultSettings().fallbacks);
   const [realTimeSettings, setRealTimeSettings] = createStore(getDefaultSettings().realTimeActions);
   const [showPopup, setShowPopup] = createSignal(false);
   const [showSaveSuccess, setShowSaveSuccess] = createSignal(false);
+  const [disableForm, setDisableForm] = createSignal(false);
 
   // Fetching saved settings so that they're displayed on form when the page is loaded.
   onMount(async () => {
     const response = await fetch(apiURL);
-    const result: AnuraSettings = await response.json();
+    if (response.status === 404) {
+      setDisableForm(true);
+    }
+
+    const result = await response.json();
     setScriptSettings(result.script);
     setFallbackSettings(result.fallbacks);
     setRealTimeSettings(result.realTimeActions);
@@ -94,25 +99,26 @@ export default function Settings() {
         />
 
         <Form onSubmit={displayPopup}>
-          {/* Instance ID */}
-          <Form.Group class="mb-3" controlId="formAnuraInstanceId">
-            <Form.Label>Instance ID</Form.Label>
-            <InputGroup hasValidation>
-              <Form.Control
-                type="number"
-                aria-label="instance-id"
-                placeholder="Enter Instance ID"
-                onInput={e => setScriptSettings({ instanceId: e.target.value })}
-                value={scriptSettings.instanceId}
-                required
-                max={1_000_000_000_000_000}
-              />
-            </InputGroup>
-            <Form.Text class="text-muted">Your assigned Instance ID.</Form.Text>
-          </Form.Group>
+          <fieldset disabled={disableForm()}>
+            {/* Instance ID */}
+            <Form.Group class="mb-3" controlId="formAnuraInstanceId">
+              <Form.Label>Instance ID</Form.Label>
+              <InputGroup hasValidation>
+                <Form.Control
+                  type="number"
+                  aria-label="instance-id"
+                  placeholder="Enter Instance ID"
+                  onInput={e => setScriptSettings({ instanceId: e.target.value })}
+                  value={scriptSettings.instanceId}
+                  required
+                  max={1_000_000_000_000_000}
+                />
+              </InputGroup>
+              <Form.Text class="text-muted">Your assigned Instance ID.</Form.Text>
+            </Form.Group>
 
-          {/* Source Method */}
-          <Form.Group class="mb-3" controlId="formAnuraSourceMethod">
+            {/* Source Method */}
+            <Form.Group class="mb-3" controlId="formAnuraSourceMethod">
               <Form.Label>Source Method</Form.Label>
               <Form.Select aria-label="source-method" onChange={e => setScriptSettings({ sourceMethod: e.target.value })}>
                 <option value="get" selected={scriptSettings.sourceMethod === "get"}>GET Method</option>
@@ -122,97 +128,98 @@ export default function Settings() {
               </Form.Select>
             </Form.Group>
 
-          {/* Source Value */}
-          <Show when={scriptSettings.sourceMethod !== "none"}>
-            <Form.Group class="mb-3" controlId="formSourceValue">
-              <Form.Label>Source Variable</Form.Label>
+            {/* Source Value */}
+            <Show when={scriptSettings.sourceMethod !== "none"}>
+              <Form.Group class="mb-3" controlId="formSourceValue">
+                <Form.Label>Source Variable</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Source Variable"
+                  onInput={(e) => setScriptSettings({ sourceValue: e.target.value })}
+                  value={scriptSettings.sourceValue}
+                  maxLength={128}
+                  required
+                />
+
+                <Form.Text class="text-muted">
+                  A variable, declared by you, to identify "source" traffic within Anura's dashboard interface.
+                </Form.Text>
+              </Form.Group>
+            </Show>
+
+            {/* Campaign Method */}
+            <Form.Group class="mb-3" controlId="formAnuraCampaignMethod">
+                <Form.Label>Campaign Method</Form.Label>
+                <Form.Select aria-label="campaign-method" onChange={e => setScriptSettings({ campaignMethod: e.target.value })}>
+                  <option value="get" selected={scriptSettings.campaignMethod === "get"}>GET Method</option>
+                  <option value="post" selected={scriptSettings.campaignMethod === "post"}>POST Method</option>
+                  <option value="hardCoded" selected={scriptSettings.campaignMethod === "hardCoded"}>Hard Coded</option>
+                  <option value="none" selected={scriptSettings.campaignMethod === "none"}>None</option>
+                </Form.Select>
+            </Form.Group>
+
+            {/* Campaign Value */}
+            <Show when={scriptSettings.campaignMethod !== "none"}>
+              <Form.Group class="mb-3" controlId="formAnuraCampaignValue">
+                <Form.Label>Campaign Variable</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Campaign Variable"
+                  onInput={(e) => setScriptSettings({ campaignValue: e.target.value })}
+                  value={scriptSettings.campaignValue}
+                  maxLength={128}
+                  required
+                />
+                <Form.Text class="text-muted">
+                  A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface.
+                </Form.Text>
+              </Form.Group>
+            </Show>
+
+            {/* Callback Function */}
+            <Form.Group class="mb-3" controlId="formAnuraCallbackFunction">
+              <Form.Label>Optional Callback Function</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter Source Variable"
-                onInput={(e) => setScriptSettings({ sourceValue: e.target.value })}
-                value={scriptSettings.sourceValue}
-                maxLength={128}
-                required
-              />
-
-              <Form.Text class="text-muted">
-                A variable, declared by you, to identify "source" traffic within Anura's dashboard interface.
-              </Form.Text>
-            </Form.Group>
-          </Show>
-
-          {/* Campaign Method */}
-          <Form.Group class="mb-3" controlId="formAnuraCampaignMethod">
-              <Form.Label>Campaign Method</Form.Label>
-              <Form.Select aria-label="campaign-method" onChange={e => setScriptSettings({ campaignMethod: e.target.value })}>
-                <option value="get" selected={scriptSettings.campaignMethod === "get"}>GET Method</option>
-                <option value="post" selected={scriptSettings.campaignMethod === "post"}>POST Method</option>
-                <option value="hardCoded" selected={scriptSettings.campaignMethod === "hardCoded"}>Hard Coded</option>
-                <option value="none" selected={scriptSettings.campaignMethod === "none"}>None</option>
-              </Form.Select>
-          </Form.Group>
-
-          {/* Campaign Value */}
-          <Show when={scriptSettings.campaignMethod !== "none"}>
-            <Form.Group class="mb-3" controlId="formAnuraCampaignValue">
-              <Form.Label>Campaign Variable</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter Campaign Variable"
-                onInput={(e) => setScriptSettings({ campaignValue: e.target.value })}
-                value={scriptSettings.campaignValue}
-                maxLength={128}
-                required
+                aria-label="callback-function"
+                placeholder="Enter Callback Function Name"
+                onInput={(e) => setScriptSettings({ callbackFunction: e.target.value })}
+                maxLength={256}
+                value={scriptSettings.callbackFunction}
               />
               <Form.Text class="text-muted">
-                A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface.
+                Callback functions are allowed to start with: "$", "_", or "a-z" characters, followed by "a-z" and "0-9" characters. 
+                <strong>Note:</strong> if you are utilizing any of our <strong>Real-Time Actions</strong> in this plugin, 
+                the Anura object's <strong>queryResult()</strong> method will be called. 
+                Please refer to our <a href="https://docs.anura.io/integration/script">docs</a> to view how your callback function may be impacted when 
+                using Real-Time Actions.
               </Form.Text>
             </Form.Group>
-          </Show>
 
-          {/* Callback Function */}
-          <Form.Group class="mb-3" controlId="formAnuraCallbackFunction">
-            <Form.Label>Optional Callback Function</Form.Label>
-            <Form.Control
-              type="text"
-              aria-label="callback-function"
-              placeholder="Enter Callback Function Name"
-              onInput={(e) => setScriptSettings({ callbackFunction: e.target.value })}
-              maxLength={256}
-              value={scriptSettings.callbackFunction}
+            <ExtraSettings 
+              scriptSettings={scriptSettings}
+              setScriptSettings={setScriptSettings}
+              fallbackSettings={fallbackSettings}
+              setFallbackSettings={setFallbackSettings}
+              realTimeSettings={realTimeSettings}
+              setRealTimeSettings={setRealTimeSettings}
             />
-            <Form.Text class="text-muted">
-              Callback functions are allowed to start with: "$", "_", or "a-z" characters, followed by "a-z" and "0-9" characters. 
-              <strong>Note:</strong> if you are utilizing any of our <strong>Real-Time Actions</strong> in this plugin, 
-              the Anura object's <strong>queryResult()</strong> method will be called. 
-              Please refer to our <a href="https://docs.anura.io/integration/script">docs</a> to view how your callback function may be impacted when 
-              using Real-Time Actions.
-            </Form.Text>
-          </Form.Group>
-          
-          <ExtraSettings 
-            scriptSettings={scriptSettings}
-            setScriptSettings={setScriptSettings}
-            fallbackSettings={fallbackSettings}
-            setFallbackSettings={setFallbackSettings}
-            realTimeSettings={realTimeSettings}
-            setRealTimeSettings={setRealTimeSettings}
-          />
 
-        <ButtonToolbar aria-label="Save toolbar">
-          <ButtonGroup class="me-2">
-            <Button variant="primary" type="submit" onSubmit={e => displayPopup(e)} style="margin-top:30px;">
-              Save Changes
-            </Button>
-          </ButtonGroup>
+            <ButtonToolbar aria-label="Save toolbar">
+              <ButtonGroup class="me-2">
+                <Button variant="primary" type="submit" onSubmit={e => displayPopup(e)} style="margin-top:30px;">
+                  Save Changes
+                </Button>
+              </ButtonGroup>
 
-          <ButtonGroup class="me-2">
-            <Button variant="secondary" onClick={e => resetSettings()} 
-              style="margin-top:30px;">
-              Reset to Default Settings
-            </Button>
-          </ButtonGroup>
-        </ButtonToolbar>
+              <ButtonGroup class="me-2">
+                <Button variant="secondary" onClick={e => resetSettings()} 
+                  style="margin-top:30px;">
+                  Reset to Default Settings
+                </Button>
+              </ButtonGroup>
+            </ButtonToolbar>
+          </fieldset>
         </Form>
       </div>
       <div style="padding-bottom: 20px;"></div>
