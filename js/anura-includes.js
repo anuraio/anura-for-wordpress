@@ -5,18 +5,19 @@
 // == Anura Script
 (function(){
   var anuraScriptOptions = JSON.parse(anuraOptions).script;
+  console.log(anuraScriptOptions);
   
   var request = {
    instance: anuraScriptOptions.instanceId,
    callback: "anuraWPCallback"
   };
 
-  if (anuraScriptOptions.sourceValue) {
-   request.source = anuraScriptOptions.sourceValue;
+  if (anuraScriptOptions.source) {
+   request.source = anuraScriptOptions.source;
   }
 
-  if (anuraScriptOptions.campaignValue) {
-   request.campaign = anuraScriptOptions.campaignValue;
+  if (anuraScriptOptions.campaign) {
+   request.campaign = anuraScriptOptions.campaign;
   }
   
   if (containsAdditionalData(anuraScriptOptions.additionalData)){

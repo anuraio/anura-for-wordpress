@@ -9,7 +9,9 @@ namespace Anura\Script;
  */
 add_action("wp_head", function() {
     $settings = get_option(SETTINGS_NAME);
-    if (!$settings) return;
+    if (!$settings) {
+        return;
+    } 
 
     $scriptSettings = $settings["script"];
     $fallbackSettings = $settings["fallbacks"];
@@ -26,9 +28,8 @@ add_action("wp_head", function() {
         $fallbackSettings["campaigns"]
     );
 
-    $scriptSettings['source'] = $source;
-    $scriptSettings['campaign'] = $campaign;
-
+    $settings["script"]["source"] = $source;
+    $settings["script"]["campaign"] = $campaign;
 
     addAnuraIncludes($settings);
 }, 1);
