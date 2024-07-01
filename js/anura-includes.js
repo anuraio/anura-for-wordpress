@@ -5,7 +5,6 @@
 // == Anura Script
 (function(){
   var anuraScriptOptions = JSON.parse(anuraOptions).script;
-  console.log(anuraScriptOptions);
   
   var request = {
    instance: anuraScriptOptions.instanceId,
