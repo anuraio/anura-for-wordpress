@@ -82,6 +82,7 @@ export const getDefaultSettings = (): AnuraSettings => {
         { name: "disableCommentSubmits", resultCondition: "noDisable" },
         { name: "disableAllSubmits", resultCondition: "noDisable" },
         { name: "disableLinks", resultCondition: "noDisable" },
+        { name: "disableAllInputs", resultCondition: "noDisable"}
       ],
       retryDurationSeconds: 4,
       stopAfterFirstElement: false
