@@ -1,4 +1,4 @@
-import { Alert, Button, ButtonGroup, ButtonToolbar, Form, InputGroup, Toast, ToastContainer } from "solid-bootstrap";
+import { Button, ButtonGroup, ButtonToolbar, Form, InputGroup, Toast, ToastContainer } from "solid-bootstrap";
 import { Show, createSignal, onMount } from "solid-js";
 import { createStore, unwrap } from "solid-js/store";
 import SavePopup from "./SavePopup";
@@ -191,7 +191,7 @@ export default function Settings() {
                 Callback functions are allowed to start with: "$", "_", or "a-z" characters, followed by "a-z" and "0-9" characters. 
                 <strong>Note:</strong> if you are utilizing any of our <strong>Real-Time Actions</strong> in this plugin, 
                 the Anura object's <strong>queryResult()</strong> method will be called. 
-                Please refer to our <a href="https://docs.anura.io/integration/script">docs</a> to view how your callback function may be impacted when 
+                Please refer to our <a href="https://docs.anura.io/integration/callback-functions">docs</a> to view how your callback function may be impacted when 
                 using Real-Time Actions.
               </Form.Text>
             </Form.Group>
