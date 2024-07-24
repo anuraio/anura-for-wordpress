@@ -6,14 +6,15 @@ var retryInterval = 200;
 /**
  * Performs all real-time actions that the user has activated 
  * according to their configurations
- * @param {object} anura 
+ * @param {object} anuraObj 
  */
-function performRealTimeActions(anura) {
-  if (shouldRedirectTraffic(anura)) {
+function performRealTimeActions() {
+  var anuraObj = Anura.getAnura();
+  if (shouldRedirectTraffic(anuraObj)) {
     redirect(realTimeActions.redirectAction.redirectURL);
   }
 
-  const actionsToPerform = getActionsToPerform(anura);
+  const actionsToPerform = getActionsToPerform();
   if (actionsToPerform.length === 0) {
     return;
   }
@@ -37,20 +38,20 @@ function performRealTimeActions(anura) {
     }
   }, 200);
 }
-
 /**
  * Gets all Real-Time Actions that the user has activated.  
  * @param {object} anura 
  * @returns {Array<RealTimeAction>} an array of RealTimeActions
  */
-function getActionsToPerform(anura) {
+function getActionsToPerform() {
+  const anuraObj = Anura.getAnura();
   const actionsToPerform = [];
   const actions = realTimeActions.actions;
   const commandFactory = new ActionCommandFactory();
 
   for (const action of actions) {
-    if (shouldPerformAction(action.name, anura)) {
-      const command = commandFactory.create(action.name, stopAfterFirstElement);
+    if (shouldPerformAction(action.name, anuraObj)) {
+      const command = commandFactory.create(action.name, stopAfterFirstElement, Anura);
       actionsToPerform.push(command);
     } 
   }

@@ -2,6 +2,8 @@
 declare(strict_types = 1);
 namespace Anura\MainSettings;
 
+use Anura\SettingsManager\SettingsManager;
+
 require_once __DIR__ . "/SettingsManager.php";
 require_once __DIR__ . "/rest_handlers.php";
 
@@ -70,5 +72,15 @@ add_action("plugins_loaded", function() {
         return;        
     }
 
+    // Adding new Real Time Action.
+    $settings = SettingsManager::getSettings();
+    if (count($settings["realTimeActions"]["actions"]) === 4) {
+        array_push($settings["realTimeActions"]["actions"], [
+            "name" => "disableAllInputs",
+            "resultCondition" => "noDisable"
+        ]);
+    }
+
+    SettingsManager::saveSettings($settings);
     update_option("anura_plugin_version", ANURA_PLUGIN_VERSION);
 });

@@ -3,6 +3,7 @@ interface AnuraSettings {
   fallbacks: FallbackSettings,
   realTimeActions: RealTimeSettings
 }
+
 interface ScriptSettings {
   instanceId: string,
   sourceMethod: string,

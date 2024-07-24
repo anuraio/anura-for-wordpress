@@ -13,7 +13,8 @@ export default function RealTimeSettings(props: RealTimeSettingsProps) {
     "Disable Forms",
     "Disable Comment Submit Buttons",
     "Disable All Submit Buttons",
-    "Disable Links"
+    "Disable Links",
+    "Disable All Forms, Buttons, and Inputs"
   ];
 
   const updateRedirectCondition = (e: Event) => {

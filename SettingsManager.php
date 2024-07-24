@@ -116,7 +116,7 @@ class SettingsManager
                     ["name" => "disableCommentSubmits", "resultCondition" => "noDisable"],
                     ["name" => "disableAllSubmits", "resultCondition" => "noDisable"],
                     ["name" => "disableLinks", "resultCondition" => "noDisable"],
-
+                    ["name" => "disableAllInputs", "resultCondition" => "noDisable"]
                 ],
                 "retryDurationSeconds" => 4,
                 "stopAtFirstElement" => false
@@ -188,6 +188,21 @@ class SettingsManager
                                     "type": "string",
                                     "$comment": "Using an enum here to force 'disableLinks' as the only option for this property.",
                                     "enum": ["disableLinks"]
+                                },
+                                "resultCondition": {
+                                    "type": "string",
+                                    "enum": ["noDisable", "onWarning", "onBad", "onBoth"]
+                                }
+                            },
+                            "required": ["name", "resultCondition"]
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "$comment": "Using an enum here to force 'disableAllInputs' as the only option for this property.",
+                                    "enum": ["disableAllInputs"]
                                 },
                                 "resultCondition": {
                                     "type": "string",

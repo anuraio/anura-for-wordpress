@@ -120,8 +120,7 @@ function anuraWPCallback() {
 }
 
 function resultCallback() {
-  var anura = Anura.getAnura();
-  performRealTimeActions(anura);
+  performRealTimeActions();
   callUsersCallbackFunction();
 }
 
@@ -159,14 +158,15 @@ var retryInterval = 200;
 /**
  * Performs all real-time actions that the user has activated 
  * according to their configurations
- * @param {object} anura 
+ * @param {object} anuraObj 
  */
-function performRealTimeActions(anura) {
-  if (shouldRedirectTraffic(anura)) {
+function performRealTimeActions() {
+  var anuraObj = Anura.getAnura();
+  if (shouldRedirectTraffic(anuraObj)) {
     redirect(realTimeActions.redirectAction.redirectURL);
   }
 
-  const actionsToPerform = getActionsToPerform(anura);
+  const actionsToPerform = getActionsToPerform();
   if (actionsToPerform.length === 0) {
     return;
   }
@@ -196,14 +196,15 @@ function performRealTimeActions(anura) {
  * @param {object} anura 
  * @returns {Array<RealTimeAction>} an array of RealTimeActions
  */
-function getActionsToPerform(anura) {
+function getActionsToPerform() {
+  const anuraObj = Anura.getAnura();
   const actionsToPerform = [];
   const actions = realTimeActions.actions;
   const commandFactory = new ActionCommandFactory();
 
   for (const action of actions) {
-    if (shouldPerformAction(action.name, anura)) {
-      const command = commandFactory.create(action.name, stopAfterFirstElement);
+    if (shouldPerformAction(action.name, anuraObj)) {
+      const command = commandFactory.create(action.name, stopAfterFirstElement, Anura);
       actionsToPerform.push(command);
     } 
   }
@@ -328,7 +329,7 @@ class RealTimeAction {
 
 // == Real Time Action Commands
 class ActionCommandFactory {
-  create(actionName, stopAfterFirstElement) {
+  create(actionName, stopAfterFirstElement, Anura) {
     switch(actionName) {
       case 'disableForms':
         return new DisableFormsCommand(stopAfterFirstElement);
@@ -338,6 +339,8 @@ class ActionCommandFactory {
         return new DisableAllSubmitsCommand(stopAfterFirstElement);
       case 'disableLinks':
         return new DisableLinksCommand(stopAfterFirstElement);
+      case 'disableAllInputs':
+        return new DisableAllInputsCommand(Anura);
       default:
         throw new Error(`${actionName} is not a real time action.`);
     }
@@ -453,6 +456,19 @@ class DisableLinksCommand extends RealTimeAction {
         return;
       }
     }
+  }
+}
+
+class DisableAllInputsCommand extends RealTimeAction {
+  #anura;
+
+  constructor(anura) {
+    super();
+    this.#anura = anura;
+  }
+
+  execute() {
+    this.#anura.getLib().actions.disableInputs();
   }
 }
 // == End Real Time Action Commands
