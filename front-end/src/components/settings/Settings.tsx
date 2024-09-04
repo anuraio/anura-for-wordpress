@@ -3,7 +3,7 @@ import { Show, createSignal, onMount } from "solid-js";
 import { createStore, unwrap } from "solid-js/store";
 import SavePopup from "./SavePopup";
 import ExtraSettings from "./ExtraSettings";
-import { ScriptSchema, FallbackSchema, RealTimeSchema, getDefaultSettings } from "./SettingsSchemas";
+import { ScriptSchema, FallbackSchema, RealTimeSchema, getDefaultSettings, ServerActionsSchema } from "./SettingsSchemas";
 
 export default function Settings() {
   const apiURL = "/?rest_route=/anura/v1/anura-settings";
@@ -11,12 +11,14 @@ export default function Settings() {
   const [scriptSettings, setScriptSettings] = createStore(getDefaultSettings().script);
   const [fallbackSettings, setFallbackSettings] = createStore(getDefaultSettings().fallbacks);
   const [realTimeSettings, setRealTimeSettings] = createStore(getDefaultSettings().realTimeActions);
+  const [serverSettings, setServerSettings] = createStore(getDefaultSettings().serverActions);
+
   const [showPopup, setShowPopup] = createSignal(false);
   const [showSaveSuccess, setShowSaveSuccess] = createSignal(false);
   const [disableForm, setDisableForm] = createSignal(false);
 
   // Fetching saved settings so that they're displayed on form when the page is loaded.
-  onMount(async () => {
+  onMount(async (): Promise<void> => {
     const response = await fetch(apiURL);
     if (response.status === 404) {
       setDisableForm(true);
@@ -26,6 +28,7 @@ export default function Settings() {
     setScriptSettings(result.script);
     setFallbackSettings(result.fallbacks);
     setRealTimeSettings(result.realTimeActions);
+    setServerSettings(result.serverActions);
   });
 
   const resetSettings = (): void => {
@@ -33,6 +36,7 @@ export default function Settings() {
     setScriptSettings(defaultSettings.script);
     setFallbackSettings(defaultSettings.fallbacks);
     setRealTimeSettings(defaultSettings.realTimeActions);
+    setServerSettings(defaultSettings.serverActions);
   };
 
   // Submits to PHP backend for processing
@@ -47,14 +51,15 @@ export default function Settings() {
       body: JSON.stringify({
         script: unwrap(scriptSettings),
         fallbacks: unwrap(fallbackSettings),
-        realTimeActions: unwrap(realTimeSettings)
+        realTimeActions: unwrap(realTimeSettings),
+        serverActions: unwrap(serverSettings)
       })
     });
 
     return response;
   };
 
-  const displayPopup = (e: SubmitEvent) => {
+  const displayPopup = (e: SubmitEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     setShowPopup(true);
@@ -82,6 +87,11 @@ export default function Settings() {
     const realTimeResult = RealTimeSchema.safeParse(unwrap(realTimeSettings));
     if (!realTimeResult.success) {
       throw new Error(realTimeResult.error.issues[0].message);
+    }
+
+    const serverActionsResult = ServerActionsSchema.safeParse(unwrap(serverSettings));
+    if (!serverActionsResult.success) {
+      throw new Error(serverActionsResult.error.issues[0].message);
     }
 
     return [];
@@ -203,6 +213,8 @@ export default function Settings() {
               setFallbackSettings={setFallbackSettings}
               realTimeSettings={realTimeSettings}
               setRealTimeSettings={setRealTimeSettings}
+              serverSettings={serverSettings}
+              setServerSettings={setServerSettings}
             />
 
             <ButtonToolbar aria-label="Save toolbar">
