@@ -1,7 +1,8 @@
 interface AnuraSettings {
   script: ScriptSettings,
   fallbacks: FallbackSettings,
-  realTimeActions: RealTimeSettings
+  realTimeActions: RealTimeSettings,
+  serverActions: ServerSettings
 }
 
 interface ScriptSettings {
@@ -35,4 +36,9 @@ interface RealTimeSettings {
   actions: RealTimeAction[],
   retryDurationSeconds: number,
   stopAfterFirstElement: boolean
+}
+
+interface ServerSettings {
+  addHeaders: boolean,
+  headerPriority: string
 }
