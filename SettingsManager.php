@@ -38,6 +38,45 @@ class SettingsManager
     }
 
     /**
+     * Creates a brand new settings associative array with all default settings, and 
+     * copies over any configurations from $oldSettings into the new settings object. 
+     * Used when any changes are made to the settings schema, and the user's settings must 
+     * be updated to match the new schema.
+     */
+    public static function repairSettings(array $oldSettings): array
+    {   
+        $newSettings = SettingsManager::getDefaultSettings();
+        
+        // Setting user's script settings
+        $newSettings["script"]["instanceId"] = $oldSettings["script"]["instanceId"] ??  $newSettings["script"]["instanceId"];
+        $newSettings["script"]["sourceMethod"] = $oldSettings["script"]["sourceMethod"] ?? $newSettings["script"]["sourceMethod"];
+        $newSettings["script"]["sourceValue"] = $oldSettings["script"]["sourceValue"] ??  $newSettings["script"]["sourceValue"];
+        $newSettings["script"]["campaignMethod"] = $oldSettings["script"]["campaignMethod"] ?? $newSettings["script"]["campaignMethod"];
+        $newSettings["script"]["campaignValue"] = $oldSettings["script"]["campaignValue"] ??  $newSettings["script"]["campaignValue"];
+        $newSettings["script"]["callbackFunction"] = $oldSettings["script"]["callbackFunction"] ?? $newSettings["script"]["callbackFunction"];
+        $newSettings["script"]["additionalData"] = $oldSettings["script"]["additionalData"] ?? $newSettings["script"]["additionalData"];
+
+        // Setting user's fallback settings
+        $newSettings["fallbacks"]["sources"] = $oldSettings["fallbacks"]["sources"] ?? $newSettings["fallback"]["sources"];
+        $newSettings["fallbacks"]["campaigns"] = $oldSettings["fallbacks"]["campaigns"] ?? $newSettings["fallback"]["campaigns"];
+
+        // Setting user's real-time actions
+        $newSettings["realTimeActions"]["redirectAction"] = $oldSettings["realTimeActions"]["redirectAction"] ?? $newSettings["realTimeActions"]["redirectAction"];
+        for ($i = 0; $i < count($newSettings["realTimeActions"]["actions"]); $i++) {
+            $newSettings["realTimeActions"]["actions"][$i]["resultCondition"] = $oldSettings["realTimeActions"]["actions"][$i]["resultCondition"] ?? $newSettings["realTimeActions"]["actions"][$i]["resultCondition"];
+        }
+        $newSettings["realTimeActions"]["retryDurationSeconds"] = $oldSettings["realTimeActions"]["retryDurationSeconds"] ?? $newSettings["realTimeActions"]["retryDurationSeconds"];
+        $newSettings["realTimeActions"]["stopAtFirstElement"] = (bool)$oldSettings["realTimeActions"]["stopAtFirstElement"] ?? $newSettings["realTimeActions"]["stopAtFirstElement"];
+
+        // Setting user's server actions
+        $newSettings["serverActions"]["addHeaders"] = (bool)$oldSettings["serverActions"]["addHeaders"] ?? $newSettings["serverActions"]["addHeaders"];
+        $newSettings["serverActions"]["headerPriority"] = $oldSettings["serverActions"]["headerPriority"] ?? $newSettings["serverActions"]["headerPriority"];
+
+        SettingsManager::saveSettings($newSettings);
+        return $newSettings;
+    }
+
+    /**
      * Takes all of the settings from the WordPress option "anura_settings_option_name" 
      * and saves them into the new WordPress option "anura_settings"
      * @param array<string> $oldSettings The settings to migrate.
@@ -120,6 +159,10 @@ class SettingsManager
                 ],
                 "retryDurationSeconds" => 4,
                 "stopAtFirstElement" => false
+            ],
+            "serverActions" => [
+                "addHeaders" => false,
+                "headerPriority" => "medium"
             ]
         ];
     }
@@ -305,9 +348,22 @@ class SettingsManager
                         }
                     },
                     "required": ["redirectAction", "actions", "retryDurationSeconds", "stopAfterFirstElement"]
+                },
+                "serverActions": {
+                    "type": "object",
+                    "properties": {
+                        "addHeaders": {
+                            "type": "boolean"
+                        },
+                        "headerPriority": {
+                            "type": "string",
+                            "enum": ["lowest", "low", "medium", "high", "highest"]
+                        }
+                    },
+                    "required": ["addHeaders"]
                 }
             },
-            "required": [ "script", "fallbacks", "realTimeActions" ]
+            "required": [ "script", "fallbacks", "realTimeActions", "serverActions" ]
         }
         JSON;
 
