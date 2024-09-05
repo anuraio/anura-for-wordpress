@@ -68,10 +68,6 @@ class SettingsManager
         $newSettings["realTimeActions"]["retryDurationSeconds"] = $oldSettings["realTimeActions"]["retryDurationSeconds"] ?? $newSettings["realTimeActions"]["retryDurationSeconds"];
         $newSettings["realTimeActions"]["stopAtFirstElement"] = (bool)$oldSettings["realTimeActions"]["stopAtFirstElement"] ?? $newSettings["realTimeActions"]["stopAtFirstElement"];
 
-        // Setting user's server actions
-        $newSettings["serverActions"]["addHeaders"] = (bool)$oldSettings["serverActions"]["addHeaders"] ?? $newSettings["serverActions"]["addHeaders"];
-        $newSettings["serverActions"]["headerPriority"] = $oldSettings["serverActions"]["headerPriority"] ?? $newSettings["serverActions"]["headerPriority"];
-
         SettingsManager::saveSettings($newSettings);
         return $newSettings;
     }
