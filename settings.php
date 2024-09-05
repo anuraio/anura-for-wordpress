@@ -72,15 +72,7 @@ add_action("plugins_loaded", function() {
         return;        
     }
 
-    // Adding new Real Time Action.
     $settings = SettingsManager::getSettings();
-    if (count($settings["realTimeActions"]["actions"]) === 4) {
-        array_push($settings["realTimeActions"]["actions"], [
-            "name" => "disableAllInputs",
-            "resultCondition" => "noDisable"
-        ]);
-    }
-
-    SettingsManager::saveSettings($settings);
+    SettingsManager::repairSettings($settings);
     update_option("anura_plugin_version", ANURA_PLUGIN_VERSION);
 });

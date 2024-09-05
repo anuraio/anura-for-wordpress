@@ -56,6 +56,13 @@ export const RealTimeSchema = z.object({
   stopAfterFirstElement: z.boolean({message: 'Only True/False values are allowed for the "Stop searching after the first element is found" setting.'})
 });
 
+export const ServerActionsSchema = z.object({
+  addHeaders: z.boolean({message: 'Only True/False values are allowed for the "Add headers" setting.'}),
+  headerPriority: z.enum(["lowest","low","medium","high","highest"], {
+    errorMap: () => ({ message: "You can only use one of the 5 options for header priority."})
+  })
+})
+
 export const getDefaultSettings = (): AnuraSettings => {
   return {
     script: {
@@ -86,6 +93,10 @@ export const getDefaultSettings = (): AnuraSettings => {
       ],
       retryDurationSeconds: 4,
       stopAfterFirstElement: false
+    },
+    serverActions: {
+      addHeaders: false,
+      headerPriority: "medium"
     }
   };
 };

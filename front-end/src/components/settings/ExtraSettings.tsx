@@ -3,6 +3,7 @@ import AdditionalData from "./extra-settings/AdditionalData";
 import FallbackSettings from "./extra-settings/FallbackSettings";
 import { SetStoreFunction } from "solid-js/store";
 import RealTimeSettings from "./extra-settings/real-time/RealTimeSettings";
+import ServerSettings from "./extra-settings/ServerSettings";
 
 interface ExtraSettingsProps {
   scriptSettings: ScriptSettings,
@@ -10,7 +11,9 @@ interface ExtraSettingsProps {
   fallbackSettings: FallbackSettings,
   setFallbackSettings: SetStoreFunction<FallbackSettings>,
   realTimeSettings: RealTimeSettings,
-  setRealTimeSettings: SetStoreFunction<RealTimeSettings>
+  setRealTimeSettings: SetStoreFunction<RealTimeSettings>,
+  serverSettings: ServerSettings,
+  setServerSettings: SetStoreFunction<ServerSettings>
 }
 
 export default function ExtraSettings(props: ExtraSettingsProps) {
@@ -61,6 +64,20 @@ export default function ExtraSettings(props: ExtraSettingsProps) {
             <RealTimeSettings 
               realTimeSettings={props.realTimeSettings}
               setRealTimeSettings={props.setRealTimeSettings}
+            />
+          </Accordion.Body>
+        </Accordion.Item>
+
+        {/* Server Actions */}
+        <Accordion.Item eventKey="3">
+          <Accordion.Header>Server Actions</Accordion.Header>
+          <Accordion.Body>
+            <p>
+              Server Actions are tweaks the plugin can make to your <strong>WordPress server</strong>.
+            </p>
+            <ServerSettings 
+              serverSettings={props.serverSettings}
+              setServerSettings={props.setServerSettings}
             />
           </Accordion.Body>
         </Accordion.Item>
