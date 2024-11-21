@@ -5,7 +5,7 @@
    Stable Tag: 2.2.1
    Tags: spam, adfraud, ad fraud, click-fraud, affiliate fraud detection
    Requires at least: 5.3
-   Tested up to: 6.6.2
+   Tested up to: 6.7.1
    Requires PHP: 7.4
    License: GPLv2 or later
    Author: Anura Solutions, LLC
