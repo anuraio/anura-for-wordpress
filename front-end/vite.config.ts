@@ -1,22 +1,25 @@
-import { defineConfig } from 'vitest/config';
-import solidPlugin from 'vite-plugin-solid';
-// import devtools from 'solid-devtools/vite';
+import solid from 'vite-plugin-solid'
+import { defineConfig } from 'vitest/config'
+import path from 'path'
 
 export default defineConfig({
-  test: {
-    coverage: {
-      provider: "istanbul",
-      reporter: ["text", "json", "clover"]
-    }
+  plugins: [solid()],
+  resolve: {
+    conditions: ['development', 'browser'],
+    alias: {
+      '~': path.resolve(__dirname, './src'),
+    },
   },
-  plugins: [
-    /* 
-    Uncomment the following line to enable solid-devtools.
-    For more info see https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#readme
-    */
-    // devtools(),
-    solidPlugin(),
-  ],
+  test: {
+    watch: false,
+    environment: 'jsdom',
+    setupFiles: ['node_modules/@testing-library/jest-dom/vitest'],
+    server: {
+      deps: {
+        inline: ['@solidjs/testing-library', '@solidjs/router'],
+      },
+    },
+  },
   server: {
     port: 3030,
   },
@@ -29,5 +32,5 @@ export default defineConfig({
         assetFileNames: `[name].[ext]`
       }
     }
-  },
-});
+  }
+})
