@@ -3,104 +3,95 @@
  */
 
 // == Anura Script
-(function(){
+(function () {
   var anuraScriptOptions = JSON.parse(anuraOptions).script;
-  
+
   var request = {
-   instance: anuraScriptOptions.instanceId,
-   callback: "anuraWPCallback"
+    instance: anuraScriptOptions.instanceId,
+    callback: "anuraWPCallback"
   };
 
   if (anuraScriptOptions.source) {
-   request.source = anuraScriptOptions.source;
+    request.source = anuraScriptOptions.source;
   }
 
   if (anuraScriptOptions.campaign) {
-   request.campaign = anuraScriptOptions.campaign;
+    request.campaign = anuraScriptOptions.campaign;
   }
-  
-  if (containsAdditionalData(anuraScriptOptions.additionalData)){
-   request.additional = toAdditionalDataString(anuraScriptOptions.additionalData);
-  }  
+
+  const hasAdditionalData = anuraScriptOptions.additionalData.length > 0;
+  if (hasAdditionalData) {
+    request.additional = toAdditionalDataString(anuraScriptOptions.additionalData);
+  }
 
   var anura = document.createElement('script');
   if ('object' === typeof anura) {
-      var params = [];
-      for (var x in request) params.push(x+'='+encodeURIComponent(request[x]));
-      params.push(Math.floor(1E12*Math.random()+1));
-      anura.type = 'text/javascript';
-      anura.async = true;
-      anura.src = 'https://script.anura.io/request.js?'+params.join('&');
-      var script = document.getElementsByTagName('script')[0];
-      script.parentNode.insertBefore(anura, script);
+    var params = [];
+    for (var x in request) params.push(x + '=' + encodeURIComponent(request[x]));
+    params.push(Math.floor(1E12 * Math.random() + 1));
+    anura.type = 'text/javascript';
+    anura.async = true;
+    anura.src = 'https://script.anura.io/request.js?' + params.join('&');
+    var script = document.getElementsByTagName('script')[0];
+    script.parentNode.insertBefore(anura, script);
   }
 })();
 
 function toAdditionalDataString(additionalData) {
-   var additionalDataObj = {};
-   for (let i = 0; i < additionalData.length; i++) {
-      additionalDataObj[i+1] = additionalData[i];
-   }
+  var additionalDataObj = {};
+  for (let i = 0; i < additionalData.length; i++) {
+    additionalDataObj[i + 1] = additionalData[i];
+  }
 
-   return JSON.stringify(additionalDataObj);
-}
-
-function containsAdditionalData(additionalData) {
-   for (let i = 0; i < additionalData.length; i++) {
-      if (additionalData[i]) {
-         return true;
-      }
-   }
-
-   return false;
+  return JSON.stringify(additionalDataObj);
 }
 
 if (!window.JSON) {
   window.JSON = {
-     parse: function(sJSON) {
-        return eval("(" + sJSON + ")");
-     },
-     stringify: (function() {
-        var toString = Object.prototype.toString;
-        var isArray = Array.isArray || function(a) {
-           return toString.call(a) === "[object Array]";
-        };
-        var escMap = {
-           "\b": "\\b",
-           "\f": "\\f",
-           "\n": "\\n",
-           "\r": "\\r",
-           "\t": "\\t"
-        };
-        var escFunc = function(m) {
-           return escMap[m];
-        };
-        var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
-        return function stringify(value) {
-           if (value === null) {
-              return "null";
-           } else if (typeof value === "number") {
-              return isFinite(value) ? value.toString() : "null";
-           } else if (typeof value === "boolean") {
-              return value.toString();
-           } else if (typeof value === "object") {
-              if (typeof value.toJSON === "function") {
-                 return stringify(value.toJSON());
-              } else if (isArray(value)) {
-                 var res = "[";
-                 for (var i = 0; i < value.length; i++) res += (i ? ", " : "") + stringify(value[i]);
-                 return res + "]";
-              } else if (toString.call(value) === "[object Object]") {
-                 var tmp = [];
-                 for (var k in value) {
-                    if (value.hasOwnProperty(k)) tmp.push(stringify(k) + ": " + stringify(value[k]));
-                 }
-                 return "{" + tmp.join(", ") + "}";
-              }
-           }
-           return "\"" + value.toString().replace(escRE, escFunc) + "\"";
-        };
-     })()
+    parse: function (sJSON) {
+      return eval("(" + sJSON + ")");
+    },
+    stringify: (function () {
+      var toString = Object.prototype.toString;
+      var isArray = Array.isArray || function (a) {
+        return toString.call(a) === "[object Array]";
+      };
+      var escMap = {
+        "\b": "\\b",
+        "\f": "\\f",
+        "\n": "\\n",
+        "\r": "\\r",
+        "\t": "\\t"
+      };
+      var escFunc = function (m) {
+        return escMap[m];
+      };
+      var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
+      return function stringify(value) {
+        if (value === null) {
+          return "null";
+        } else if (typeof value === "number") {
+          return isFinite(value) ? value.toString() : "null";
+        } else if (typeof value === "boolean") {
+          return value.toString();
+        } else if (typeof value === "object") {
+          if (typeof value.toJSON === "function") {
+            return stringify(value.toJSON());
+          } else if (isArray(value)) {
+            var res = "[";
+            for (var i = 0; i < value.length; i++) res += (i ? ", " : "") + stringify(value[i]);
+            return res + "]";
+          } else if (toString.call(value) === "[object Object]") {
+            var tmp = [];
+            for (var k in value) {
+              if (value.hasOwnProperty(k)) tmp.push(stringify(k) + ": " + stringify(value[k]));
+            }
+            return "{" + tmp.join(", ") + "}";
+          }
+        }
+        return "\"" + value.toString().replace(escRE, escFunc) + "\"";
+      };
+    })()
   };
 }
 // == End Anura Script
@@ -110,7 +101,7 @@ function anuraWPCallback() {
   if (!Anura.getAnura().getId()) {
     return;
   }
-  
+
   if (isUsingActions()) {
     Anura.getAnura().queryResult(resultCallback);
     return;
@@ -142,7 +133,7 @@ function isUsingActions() {
 
 function callUsersCallbackFunction() {
   var anuraScriptOptions = JSON.parse(anuraOptions).script;
-  
+
   if (typeof window[anuraScriptOptions.callbackFunction] === "function") {
     window[anuraScriptOptions.callbackFunction]();
   }
@@ -175,7 +166,7 @@ function performRealTimeActions() {
   let startTime = new Date().getTime();
   let endTime = startTime + retryDurationMillis;
 
-  const actionInterval = window.setInterval(function() {
+  const actionInterval = window.setInterval(function () {
     let currentTime = new Date().getTime();
     if (currentTime >= endTime) {
       clearInterval(actionInterval);
@@ -206,7 +197,7 @@ function getActionsToPerform() {
     if (shouldPerformAction(action.name, anuraObj)) {
       const command = commandFactory.create(action.name, stopAfterFirstElement, Anura);
       actionsToPerform.push(command);
-    } 
+    }
   }
 
   return actionsToPerform;
@@ -224,12 +215,12 @@ function shouldPerformAction(actionName, anura) {
 
   if (!action) {
     return false;
-  } 
+  }
 
   const actionConditions = getActionConditions(action);
 
   return ((actionConditions.onWarning && anura.isWarning()) ||
-          (actionConditions.onBad && anura.isBad()));
+    (actionConditions.onBad && anura.isBad()));
 }
 
 /** 
@@ -295,8 +286,8 @@ function shouldRedirectTraffic(anura) {
 
   var redirectConditions = getActionConditions(realTimeActions.redirectAction);
 
-  return ((redirectConditions.onWarning && anura.isWarning()) || 
-          (redirectConditions.onBad && anura.isBad()));
+  return ((redirectConditions.onWarning && anura.isWarning()) ||
+    (redirectConditions.onBad && anura.isBad()));
 }
 
 /**
@@ -330,7 +321,7 @@ class RealTimeAction {
 // == Real Time Action Commands
 class ActionCommandFactory {
   create(actionName, stopAfterFirstElement, Anura) {
-    switch(actionName) {
+    switch (actionName) {
       case 'disableForms':
         return new DisableFormsCommand(stopAfterFirstElement);
       case 'disableCommentSubmits':
@@ -365,7 +356,7 @@ class DisableAllSubmitsCommand extends RealTimeAction {
 
   #disableElements(elements) {
     var elementsToDisable = (stopAfterFirstElement) ? 1 : elements.length;
-  
+
     for (var i = 0; i < elementsToDisable; i++) {
       elements[i].disabled = true;
       if (this.#stopAfterFirstElement) {
@@ -393,7 +384,7 @@ class DisableCommentSubmitsCommand extends RealTimeAction {
 
   #disableElements(elements) {
     var elementsToDisable = (stopAfterFirstElement) ? 1 : elements.length;
-  
+
     for (var i = 0; i < elementsToDisable; i++) {
       elements[i].disabled = true;
       if (this.#stopAfterFirstElement) {
@@ -421,7 +412,7 @@ class DisableFormsCommand extends RealTimeAction {
 
   #disableElements(elements) {
     var elementsToDisable = (stopAfterFirstElement) ? 1 : elements.length;
-    
+
     for (var i = 0; i < elementsToDisable; i++) {
       elements[i].disabled = true;
       if (this.#stopAfterFirstElement) {
@@ -445,11 +436,11 @@ class DisableLinksCommand extends RealTimeAction {
     }
 
     this.#disableElements(links);
-  } 
-  
+  }
+
   #disableElements(elements) {
     var elementsToDisable = (stopAfterFirstElement) ? 1 : elements.length;
-  
+
     for (var i = 0; i < elementsToDisable; i++) {
       elements[i].disabled = true;
       if (this.#stopAfterFirstElement) {
