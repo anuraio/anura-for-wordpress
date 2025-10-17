@@ -1,0 +1,45 @@
+# Development files
+node_modules/
+vendor/
+.git/
+.github/
+.phpunit.cache/
+coverage/
+*.log
+
+# Source files (not needed in release)
+anura-script/src/
+anura-script/node_modules/
+anura-script/package.json
+anura-script/pnpm-lock.yaml
+anura-script/tsconfig.json
+anura-script/vite.config.ts
+anura-script/.gitignore
+
+front-end/src/
+front-end/node_modules/
+front-end/package.json
+front-end/pnpm-lock.yaml
+front-end/tsconfig.json
+front-end/vite.config.ts
+front-end/.gitignore
+front-end/index.html
+
+# Test files
+tests/
+phpunit*.xml
+phpcs*.xml
+composer.json
+composer.lock
+
+# Build tools
+bin/
+.wp-env.json
+
+# Documentation
+CLAUDE.md
+README.md
+
+# Other
+.DS_Store
+Thumbs.db

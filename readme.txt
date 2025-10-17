@@ -1,11 +1,11 @@
 === Anura.io ===
    Plugin URI: https://www.anura.io/anura-script
    description: Welcome to Anura’s WordPress plug-in.  Anura is an Ad Fraud solution designed to accurately eliminate fraud to improve conversion rates.  With this plug in, you can easily set up a real-time visitor firewall to keep the fraud off of your site.  Before you can set this up, be sure to reach out to sales@anura.io to get your account set up first.
-   Version: 2.2.3
-   Stable Tag: 2.2.3
+   Version: 3.0.0
+   Stable Tag: 3.0.0
    Tags: spam, adfraud, ad fraud, click-fraud, affiliate fraud detection
    Requires at least: 5.3
-   Tested up to: 6.8.2
+   Tested up to: 6.8.3
    Requires PHP: 7.4
    License: GPLv2 or later
    Author: Anura Solutions, LLC
@@ -58,6 +58,15 @@ If you're interested in opening an account, you can email [sales@anura.io](mailt
 * Addition of capability to add **Additional Data**
 * Addition of fallback source & campaign values
 * Addition of **Real Time Actions**
+
+= 3.0.0 =
+* New, modern UI powered by **React**
+* Can protect your WordPress Admin login screen with the new **Protect Login** Real-Time Action
+* **Search & Social Protection** support
+* Now able to specify where Anura Script gets integrated on your site via **Request Triggers**
+* Can execute specific code on good results via **Content Deployment**
+* Additional Data now supports **GET/POST params**
+* Various bug fixes
 
 == Upgrade Notice ==
 

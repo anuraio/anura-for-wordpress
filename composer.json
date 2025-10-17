@@ -1,18 +1,63 @@
 {
     "name": "anuraio/anura-for-wordpress",
     "type": "wordpress-plugin",
-    "version": "1.0.0",
-    "license": "GPL-2.0-or-later",
+    "version": "3.0.0",
+    "license": "GPL-3.0-or-later",
     "require": {
         "justinrainbow/json-schema": "^5.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "9.6",
-        "10up/wp_mock": "^1.0"
+        "phpunit/phpunit": "^9.6",
+        "10up/wp_mock": "^1.0",
+        "wp-coding-standards/wpcs": "^3.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "yoast/phpunit-polyfills": "^1.0",
+        "php-stubs/wordpress-tests-stubs": "^6.6",
+        "php-mock/php-mock-phpunit": "^2.13"
     },
     "scripts": {
         "test": [
-            "./vendor/bin/phpunit tests/"
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": [
+            "./vendor/bin/phpunit --configuration phpunit-unit.xml"
+        ],
+        "test:integration": [
+            "wp-env run tests-cli --env-cwd=wp-content/plugins/anura-io phpunit --configuration phpunit-integration.xml"
+        ],
+        "coverage": [
+            "@coverage:unit",
+            "wp-env run tests-cli --env-cwd=wp-content/plugins/anura-io bash -c \"XDEBUG_MODE=coverage phpunit --configuration phpunit-integration.xml --coverage-php coverage/integration/coverage.php\"",
+            "php bin/merge-coverage.php"
+        ],
+        "coverage:unit": [
+            "XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration phpunit-unit.xml --coverage-html coverage/unit/html --coverage-text --coverage-php coverage/unit/coverage.php"
+        ],
+        "coverage:integration": [
+            "wp-env run tests-cli --env-cwd=wp-content/plugins/anura-io bash -c \"XDEBUG_MODE=coverage phpunit --configuration phpunit-integration.xml --coverage-php coverage/integration/coverage.php\""
+        ],
+
+        "check-compat": [
+            "./vendor/bin/phpcs -p . --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- --extensions=php --colors --ignore=*/vendor/*,*/node_modules/*,*/front-end/*,*/anura-script/*,*/tests/*,*/bin/*,*/coverage/*"
+        ],
+        "phpcs": [
+            "./vendor/bin/phpcs -p --standard=phpcs.xml"
+        ],
+        "phpcs:tests": [
+            "./vendor/bin/phpcs -p --standard=phpcs-tests.xml"
+        ],
+        "phpcs:all": [
+            "@phpcs",
+            "@phpcs:tests"
+        ],
+        "lint": [
+            "vendor/bin/phpcbf -p -l ./*.php --standard=phpcs.xml"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
