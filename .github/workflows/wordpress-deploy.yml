@@ -1,0 +1,62 @@
+name: Deploy to WordPress.org
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (must match plugin version)'
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy to WordPress.org SVN
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # PHP Setup
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-dev --optimize-autoloader
+
+      # Node.js Setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # Build anura-script
+      - name: Install and build anura-script
+        working-directory: ./anura-script
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      # Build front-end
+      - name: Install and build front-end
+        working-directory: ./front-end
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      # Deploy to WordPress.org
+      - name: WordPress.org Plugin Deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: anura-io
+          VERSION: ${{ github.event.inputs.version }}
+        with:
+          generate-zip: true

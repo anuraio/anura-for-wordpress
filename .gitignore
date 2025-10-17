@@ -1,0 +1,20 @@
+coverage/
+
+.phpunit.cache/
+
+phpunit.xml
+
+/vendor/
+
+.vscode/
+
+.claude/
+
+/CLAUDE.md
+
+dist/
+
+node_modules/
+
+# Vite cache files
+*.timestamp-*

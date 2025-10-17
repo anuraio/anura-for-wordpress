@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         bootstrap="tests/unit/bootstrap.php"
+         cacheResultFile=".phpunit.cache/unit-test-results"
+         executionOrder="depends,defects"
+         convertDeprecationsToExceptions="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         verbose="true">
+    <testsuites>
+        <testsuite name="unit">
+            <file>tests/unit/LoginProtectionTest.php</file>
+            <file>tests/unit/AnuraUtilitiesTest.php</file>
+            <file>tests/unit/SettingsManagerTest.php</file>
+        </testsuite>
+    </testsuites>
+    <coverage>
+        <include>
+            <file>class-settings-manager.php</file>
+            <file>anura-utilities.php</file>
+            <file>anura-script.php</file>
+            <file>login-protection.php</file>
+            <file>login-protection-db.php</file>
+            <file>rest-handlers.php</file>
+            <file>settings.php</file>
+        </include>
+        <report>
+            <html outputDirectory="coverage/unit/html"/>
+            <text outputFile="coverage/unit/coverage.txt"/>
+            <clover outputFile="coverage/unit/clover.xml"/>
+        </report>
+    </coverage>
+</phpunit>

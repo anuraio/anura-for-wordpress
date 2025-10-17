@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         bootstrap="tests/bootstrap-integration.php"
+         cacheResultFile=".phpunit.cache/integration-test-results"
+         executionOrder="depends,defects"
+         convertDeprecationsToExceptions="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         verbose="true">
+    <testsuites>
+        <testsuite name="integration">
+            <directory>tests/integration</directory>
+        </testsuite>
+    </testsuites>
+    <coverage>
+        <include>
+            <file>class-settings-manager.php</file>
+            <file>anura-utilities.php</file>
+            <file>anura-script.php</file>
+            <file>login-protection.php</file>
+            <file>login-protection-db.php</file>
+            <file>rest-handlers.php</file>
+            <file>settings.php</file>
+        </include>
+        <report>
+            <html outputDirectory="coverage/integration/html"/>
+            <text outputFile="coverage/integration/coverage.txt"/>
+            <clover outputFile="coverage/integration/clover.xml"/>
+        </report>
+    </coverage>
+</phpunit>

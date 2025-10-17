@@ -1,0 +1,176 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 3.0.0)'
+        required: true
+
+jobs:
+  test:
+    name: Run All Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # PHP Setup and Tests
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mysqli
+          tools: composer
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-dev
+
+      - name: Run PHP unit tests
+        run: composer test:unit
+
+      # Node.js Setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # anura-script tests
+      - name: Install anura-script dependencies
+        working-directory: ./anura-script
+        run: pnpm install --frozen-lockfile
+
+      - name: Run anura-script tests
+        working-directory: ./anura-script
+        run: pnpm test
+
+      # front-end tests
+      - name: Install front-end dependencies
+        working-directory: ./front-end
+        run: pnpm install --frozen-lockfile
+
+      - name: Run front-end tests
+        working-directory: ./front-end
+        run: pnpm test
+
+  build:
+    name: Build Release Package
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # PHP Setup
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Install PHP dependencies (production only)
+        run: composer install --prefer-dist --no-progress --no-dev --optimize-autoloader
+
+      # Node.js Setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # Build anura-script
+      - name: Install anura-script dependencies
+        working-directory: ./anura-script
+        run: pnpm install --frozen-lockfile
+
+      - name: Build anura-script
+        working-directory: ./anura-script
+        run: pnpm build
+
+      # Build front-end
+      - name: Install front-end dependencies
+        working-directory: ./front-end
+        run: pnpm install --frozen-lockfile
+
+      - name: Build front-end
+        working-directory: ./front-end
+        run: pnpm build
+
+      # Package for release
+      - name: Create release directory
+        run: |
+          mkdir -p release/anura-io
+
+      - name: Copy PHP files
+        run: |
+          cp *.php release/anura-io/
+          cp LICENSE release/anura-io/
+
+      - name: Copy composer dependencies
+        run: |
+          cp -r vendor release/anura-io/
+
+      - name: Copy anura-script build
+        run: |
+          mkdir -p release/anura-io/anura-script/dist
+          cp anura-script/dist/anura-includes.iife.js release/anura-io/anura-script/dist/
+
+      - name: Copy front-end build
+        run: |
+          mkdir -p release/anura-io/front-end/dist
+          cp front-end/dist/index.js release/anura-io/front-end/dist/
+          cp front-end/dist/index.css release/anura-io/front-end/dist/
+
+      - name: Copy assets
+        run: |
+          if [ -d "assets" ]; then
+            cp -r assets release/anura-io/
+          fi
+
+      # Create zip archive
+      - name: Create ZIP archive
+        run: |
+          cd release
+          zip -r anura-io.zip anura-io/
+          cd ..
+
+      - name: Generate checksums
+        run: |
+          cd release
+          sha256sum anura-io.zip > checksums.txt
+          cd ..
+
+      # Upload artifact
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: anura-io-plugin
+          path: |
+            release/anura-io.zip
+            release/checksums.txt
+          retention-days: 30
+
+      # Create GitHub Release (only on tag push)
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release/anura-io.zip
+            release/checksums.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
