@@ -46,10 +46,11 @@ if ( file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 }
 
 /**
- * Manually load the plugin being tested.
+ * Manually load and activate the plugin being tested.
  */
 function _manually_load_plugin() {
 	require dirname( __DIR__ ) . '/anura-plugin.php';
+	\Anura\LoginLogs\create_blocked_logins_table();
 }
 
 // Load plugin early
