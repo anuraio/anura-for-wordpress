@@ -2,9 +2,9 @@ name: Plugin Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   php-compatibility:
@@ -21,7 +21,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer update --prefer-dist --no-progress --no-interaction
 
       - name: Run PHP Compatibility Check
         run: composer check-compat
@@ -45,7 +45,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer update --prefer-dist --no-progress --no-interaction
 
       - name: Run PHPUnit tests
         run: composer test:unit
@@ -59,13 +59,18 @@ jobs:
         php: ['7.4', '8.0', '8.1', '8.2', '8.3']
         wordpress: ['5.3', '5.9', '6.0', '6.4', 'latest']
         exclude:
-          # PHP 8.2 and 8.3 not compatible with WP 5.3-5.9
-          - php: '8.2'
+          # WP 5.3 only supports PHP 7.4
+          - php: '8.0'
+            wordpress: '5.3'
+          - php: '8.1'
             wordpress: '5.3'
           - php: '8.2'
-            wordpress: '5.9'
+            wordpress: '5.3'
           - php: '8.3'
             wordpress: '5.3'
+          # PHP 8.2+ are not compatible with WP 5.9
+          - php: '8.2'
+            wordpress: '5.9'
           - php: '8.3'
             wordpress: '5.9'
     services:
@@ -91,7 +96,33 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: |
+          if [ "${{ matrix.wordpress }}" = "5.3" ]; then
+            # WP 5.3 requires PHPUnit 7
+            # Create minimal composer.json just for 5.3
+            cat > composer.json.wp53 << 'EOF'
+          {
+            "name": "anuraio/anura-for-wordpress",
+            "type": "wordpress-plugin",
+            "require": {
+              "justinrainbow/json-schema": "^5.2"
+            },
+            "require-dev": {
+              "phpunit/phpunit": "^7.5",
+              "yoast/phpunit-polyfills": "^1.0"
+            }
+          }
+          EOF
+            mv composer.json composer.json.backup
+            mv composer.json.wp53 composer.json
+            rm -f composer.lock
+            composer install --prefer-dist --no-progress --no-interaction
+          else
+            composer update --prefer-dist --no-progress --no-interaction
+          fi
+
+      - name: Install Subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
 
       - name: Install WordPress Test Suite
         run: |
@@ -114,7 +145,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer update --prefer-dist --no-progress --no-interaction
 
       - name: Run PHPCS
         run: composer phpcs
