@@ -24,6 +24,7 @@ front-end/tsconfig.json
 front-end/vite.config.ts
 front-end/.gitignore
 front-end/index.html
+front-end/vitest.config.ts
 
 # Test files
 tests/
@@ -39,6 +40,11 @@ bin/
 # Documentation
 CLAUDE.md
 README.md
+
+# Version control
+.svnignore
+.gitignore
+.gitattributes
 
 # Other
 .DS_Store
