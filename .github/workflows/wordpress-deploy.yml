@@ -58,6 +58,3 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: anura-io
           VERSION: ${{ github.event.inputs.version }}
-        with:
-          generate-zip: true
-          dry-run: true
