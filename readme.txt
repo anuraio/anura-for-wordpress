@@ -10,7 +10,8 @@
    License: GPLv2 or later
    Author: Anura Solutions, LLC
    Author URI: https://www.anura.io/
-
+   Anura aims to help businesses ensure their advertising efforts are reaching genuine users, thereby maximizing the return on investment and maintaining the integrity of their digital marketing campaigns.
+   
 == Description ==
 
 
