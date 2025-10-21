@@ -7,7 +7,8 @@ coverage/
 *.log
 
 # Source files (not needed in release)
-*/src/
+front-end/src/
+anura-script/src/
 package.json
 pnpm-lock.yaml
 .npmrc
