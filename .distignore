@@ -1,6 +1,5 @@
 # Development files
 node_modules/
-vendor/
 .git/
 .github/
 .phpunit.cache/
@@ -24,6 +23,7 @@ front-end/tsconfig.json
 front-end/vite.config.ts
 front-end/.gitignore
 front-end/index.html
+front-end/vitest.config.ts
 
 # Test files
 tests/
@@ -37,8 +37,11 @@ bin/
 .wp-env.json
 
 # Documentation
-CLAUDE.md
 README.md
+
+# Version control
+.gitignore
+.gitattributes
 
 # Other
 .DS_Store
