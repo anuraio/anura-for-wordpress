@@ -60,3 +60,4 @@ jobs:
           VERSION: ${{ github.event.inputs.version }}
         with:
           generate-zip: true
+          dry-run: true
