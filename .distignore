@@ -1,6 +1,5 @@
 # Development files
 node_modules/
-vendor/
 .git/
 .github/
 .phpunit.cache/
@@ -38,11 +37,9 @@ bin/
 .wp-env.json
 
 # Documentation
-CLAUDE.md
 README.md
 
 # Version control
-.svnignore
 .gitignore
 .gitattributes
 
