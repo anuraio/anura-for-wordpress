@@ -1,11 +1,11 @@
-import '@testing-library/jest-dom/vitest';
-import { afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
+import "@testing-library/jest-dom/vitest";
+import { afterEach, vi } from "vitest";
+import { cleanup } from "@testing-library/react";
 
 // Mock window.matchMedia for WordPress components
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -18,21 +18,23 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock ResizeObserver for WordPress components
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+globalThis.ResizeObserver = vi.fn().mockImplementation(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+}) as unknown as typeof ResizeObserver;
 
 // Mock Prism.js for syntax highlighting
-vi.mock('prismjs', () => ({
+vi.mock("prismjs", () => ({
   default: {
     highlightElement: vi.fn(),
   },
 }));
 
-vi.mock('prismjs/components/prism-javascript', () => ({}));
-vi.mock('prismjs/themes/prism.css', () => ({}));
+vi.mock("prismjs/components/prism-javascript", () => ({}));
+vi.mock("prismjs/themes/prism.css", () => ({}));
 
 // Automatically cleanup DOM after each test
 afterEach(() => {
