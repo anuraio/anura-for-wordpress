@@ -4,7 +4,7 @@
 	Plugin Name: Anura.io
 	Plugin URI: https://wordpress.org/plugins/anura-io/
 	description: Anura is an Ad Fraud solution designed to accurately eliminate fraud to improve conversion rates. With the Anura for WordPress plugin, you can easily set up a real-time visitor firewall to keep the fraud off of your site.  Before you can set this up, be sure to reach out to <a href="mailto:sales@anura.io">sales@anura.io</a> to get your account set up first.
-	Version: 3.0.1
+	Version: 3.0.2
 	Requires at least: 5.3
 	Requires PHP: 7.4
 	Author: Anura Solutions, LLC
@@ -14,7 +14,7 @@
 namespace Anura;
 
 if ( ! defined( 'ANURA_PLUGIN_VERSION' ) ) {
-	define( 'ANURA_PLUGIN_VERSION', '3.0.1' );
+	define( 'ANURA_PLUGIN_VERSION', '3.0.2' );
 }
 
 define( 'ANURA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
