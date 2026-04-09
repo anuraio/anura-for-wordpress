@@ -57,7 +57,7 @@ jobs:
       fail-fast: false
       matrix:
         php: ['7.4', '8.0', '8.1', '8.2', '8.3']
-        wordpress: ['5.3', '5.9', '6.0', '6.4', 'latest']
+        wordpress: ['5.3', '5.9', '6.0', '6.4', 'latest', '7.0-RC2']
         exclude:
           # WP 5.3 only supports PHP 7.4
           - php: '8.0'
@@ -164,12 +164,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - name: Install dependencies
         working-directory: ./${{ matrix.project }}
