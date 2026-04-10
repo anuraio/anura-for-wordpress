@@ -16,6 +16,7 @@
         "php-mock/php-mock-phpunit": "^2.13"
     },
     "scripts": {
+        "build": "bash bin/build.sh",
         "test": [
             "@test:unit",
             "@test:integration"
