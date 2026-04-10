@@ -48,14 +48,14 @@ add_action(
 			'anura-react-js',
 			plugins_url( '/front-end/dist/index.js', __FILE__ ),
 			array(),
-			'3.0.0'
+			'3.0.3'
 		);
 
 		wp_enqueue_style(
 			'anura-react-css',
 			plugins_url( '/front-end/dist/index.css', __FILE__ ),
 			array(),
-			'3.0.0'
+			'3.0.3'
 		);
 
 		wp_localize_script(

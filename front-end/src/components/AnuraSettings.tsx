@@ -19,7 +19,7 @@ import type { UseFormReturn, FieldErrors } from "react-hook-form";
 import type { UISettings } from "../schemas/settings.schema";
 
 // Map tabs to their associated form fields
-const TAB_FIELD_MAP: Record<string, string[]> = {
+const TAB_FIELD_MAP: Record<string, (keyof UISettings)[]> = {
   setup: [
     "instanceId",
     "sourceMethod",
