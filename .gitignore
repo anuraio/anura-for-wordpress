@@ -1,5 +1,9 @@
 coverage/
 
+release/
+
+.wp-env.override.json
+
 .phpunit.cache/
 
 phpunit.xml
