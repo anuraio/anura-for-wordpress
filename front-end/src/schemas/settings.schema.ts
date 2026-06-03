@@ -651,8 +651,7 @@ export const transformFromAPIPayload = (
     callbackFunction: apiSettings.script.callbackFunction,
     ignoreBots: apiSettings.bots?.enabled ?? false,
     botWhitelist: botWhitelist,
-    additionalData: (apiSettings.script
-      .additionalData as unknown as AdditionalDataItem[]) || [
+    additionalData: (apiSettings.script.additionalData) || [
       { method: "get", value: "" },
     ],
     redirectCondition:

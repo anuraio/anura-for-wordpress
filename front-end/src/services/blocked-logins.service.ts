@@ -66,15 +66,15 @@ export const getBlockedLogins = async (
     // Check if this is a database error response (500 error)
     if (wpError.data?.error && wpError.data?.message) {
       const errorData = wpError.data as BlockedLoginsErrorResponse;
-      throw new Error(`${errorData.error}: ${errorData.message}`);
+      throw new Error(`${errorData.error}: ${errorData.message}`, { cause: error });
     }
 
     // Handle other API errors
     if (wpError.message) {
-      throw new Error(wpError.message);
+      throw new Error(wpError.message, { cause: error });
     }
 
     // Generic fallback error
-    throw new Error('Failed to fetch blocked login logs. Please try again later.');
+    throw new Error('Failed to fetch blocked login logs. Please try again later.', { cause: error });
   }
 };
