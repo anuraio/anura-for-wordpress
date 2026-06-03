@@ -1,7 +1,7 @@
 {
     "name": "anuraio/anura-for-wordpress",
     "type": "wordpress-plugin",
-    "version": "3.0.0",
+    "version": "3.0.4",
     "license": "GPL-3.0-or-later",
     "require": {
         "justinrainbow/json-schema": "^5.2"
