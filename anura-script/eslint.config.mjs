@@ -1,9 +1,8 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
+import { defineConfig } from 'eslint/config';
 
-export default tseslint.config(
-  // Ignore build artifacts, dependencies, and config files
-  {
+export default defineConfig({
     ignores: [
       'dist/**',
       'node_modules/**',
@@ -60,5 +59,4 @@ export default tseslint.config(
       '@typescript-eslint/no-empty-function': 'off',
       'no-console': 'off',
     },
-  }
-);
+});

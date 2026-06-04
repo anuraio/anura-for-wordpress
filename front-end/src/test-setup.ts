@@ -24,7 +24,7 @@ globalThis.ResizeObserver = vi.fn().mockImplementation(function () {
     unobserve: vi.fn(),
     disconnect: vi.fn(),
   };
-}) as unknown as typeof ResizeObserver;
+});
 
 // Mock Prism.js for syntax highlighting
 vi.mock("prismjs", () => ({
