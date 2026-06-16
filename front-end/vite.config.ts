@@ -54,6 +54,9 @@ export default defineConfig({
     rollupOptions: {
       input: "./src/index.tsx",
       output: {
+        format: "iife",
+        inlineDynamicImports: true,
+        name: "AnuraPlugin",
         entryFileNames: `[name].js`,
         chunkFileNames: `[name].js`,
         assetFileNames: `[name].[ext]`,
